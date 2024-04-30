@@ -35,7 +35,7 @@ def not_author(django_user_model):
 
 
 @pytest.fixture
-def comment(author):
+def comment(author, news):
     comment = Comment.objects.create(
         news=news,
         text='Текст комментария',
