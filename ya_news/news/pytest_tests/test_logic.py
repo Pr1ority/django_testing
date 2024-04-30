@@ -68,7 +68,8 @@ def test_author_can_delete_comment(author_client, delete_url, url_to_comments):
     assert comments_count == 0
 
 
-def test_user_cant_delete_comment_of_another_user(not_author_client, delete_url):
+def test_user_cant_delete_comment_of_another_user(not_author_client,
+                                                  delete_url):
     response = not_author_client.delete(delete_url)
     assert response.status_code == HTTPStatus.NOT_FOUND
     comments_count = Comment.objects.count()
