@@ -1,3 +1,5 @@
+import pytest
+
 from django.conf import settings
 from django.urls import reverse
 
@@ -22,6 +24,7 @@ def test_news_order(client):
     assert all_dates == sorted_dates
 
 
+@pytest.mark.django_db
 def test_comments_order(client, detail_url):
     response = client.get(detail_url)
     assert 'news' in response.context
@@ -32,6 +35,7 @@ def test_comments_order(client, detail_url):
     assert all_timestamps == sorted_timestamps
 
 
+@pytest.mark.django_db
 def test_anonymous_client_has_no_form(client, detail_url):
     response = client.get(detail_url)
     assert 'form' not in response.context
