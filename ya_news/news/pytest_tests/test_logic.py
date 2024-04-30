@@ -45,6 +45,7 @@ def test_user_cant_use_bad_words(author_client, detail_url):
     assert comments_count == 0
 
 
+@pytest.mark.django_db
 def test_author_can_edit_comment(author_client, edit_url, form_data,
                                  url_to_comments, comment):
     response = author_client.post(edit_url, data=form_data)
@@ -53,6 +54,7 @@ def test_author_can_edit_comment(author_client, edit_url, form_data,
     assert comment.text == form_data['text']
 
 
+@pytest.mark.django_db
 def test_user_cant_edit_comment_of_another_user(not_author_client, edit_url,
                                                 form_data, comment):
     response = not_author_client.post(edit_url, data=form_data)
