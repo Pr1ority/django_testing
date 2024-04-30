@@ -7,6 +7,7 @@ from django.urls import reverse
 from pytest_django.asserts import assertRedirects
 
 
+
 User = get_user_model()
 
 
@@ -14,7 +15,7 @@ User = get_user_model()
     'name, args',
     (
         ('news:home', None),
-        ('news:detail', ('id_for_args',)),
+        ('news:detail', pytest.lazy_fixture('news')),
         ('users:login', None),
         ('users:logout', None),
         ('users:signup', None),
