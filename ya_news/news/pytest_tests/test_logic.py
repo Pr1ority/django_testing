@@ -20,7 +20,7 @@ def test_anonymous_user_cant_create_comment(client, detail_url, form_data):
 
 
 def test_user_can_create_comment(author_client, detail_url, form_data, news,
-                                 user):
+                                 author):
     response = author_client.post(detail_url, data=form_data)
     assertRedirects(response, f'{detail_url}#comments')
     comments_count = Comment.objects.count()
@@ -28,7 +28,7 @@ def test_user_can_create_comment(author_client, detail_url, form_data, news,
     comment = Comment.objects.get()
     assert comment.text == 'Текст комментария'
     assert comment.news == news
-    assert comment.author == user
+    assert comment.author == author
 
 
 @pytest.mark.django_db
@@ -60,14 +60,14 @@ def test_user_cant_edit_comment_of_another_user(not_author_client, edit_url,
     comment_from_db = Comment.objects.get(id=comment.id)
     assert comment.text == comment_from_db.text
 
-
+@pytest.mark.django_db
 def test_author_can_delete_comment(author_client, delete_url, url_to_comments):
     response = author_client.delete(delete_url)
     assertRedirects(response, url_to_comments)
     comments_count = Comment.objects.count()
     assert comments_count == 0
 
-
+@pytest.mark.django_db
 def test_user_cant_delete_comment_of_another_user(not_author_client,
                                                   delete_url):
     response = not_author_client.delete(delete_url)
