@@ -38,6 +38,7 @@ def test_pages_availability(client, name, args):
     'name',
     ('news:edit', 'news:delete'),
 )
+@pytest.mark.django_db
 def test_availability_for_comment_edit_and_delete(parametrized_client, name,
                                                   expected_status, comment):
     url = reverse(name, args=(comment.id,))
@@ -52,6 +53,7 @@ def test_availability_for_comment_edit_and_delete(parametrized_client, name,
         ('news:edit'),
     ),
 )
+@pytest.mark.django_db
 def test_redirect_for_anonymous_client(name, client, comment):
     login_url = reverse('users:login')
     url = reverse(name, args=(comment.id,))
