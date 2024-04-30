@@ -7,7 +7,6 @@ from django.urls import reverse
 from pytest_django.asserts import assertRedirects
 
 
-
 User = get_user_model()
 
 
