@@ -14,7 +14,7 @@ User = get_user_model()
     'name, args',
     (
         ('news:home', None),
-        ('news:detail', pytest.lazy_fixture('news')),
+        ('news:detail', (pytest.lazy_fixture('news').id,)),
         ('users:login', None),
         ('users:logout', None),
         ('users:signup', None),
@@ -22,8 +22,6 @@ User = get_user_model()
 )
 @pytest.mark.django_db
 def test_pages_availability(client, name, args):
-    if args is None:
-        args = ()
     url = reverse(name, args=args)
     response = client.get(url)
     assert response.status_code == HTTPStatus.OK
