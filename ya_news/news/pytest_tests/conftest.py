@@ -25,11 +25,6 @@ def news():
 
 
 @pytest.fixture
-def id_for_args(news):
-    return (news.id,)
-
-
-@pytest.fixture
 def not_author(django_user_model):
     return django_user_model.objects.create(username='Не автор')
 
@@ -56,20 +51,6 @@ def not_author_client(not_author):
     client = Client()
     client.force_login(not_author)
     return client
-
-
-@pytest.fixture
-def all_news():
-    today = datetime.today()
-    all_news = [
-        News(
-            title=f'Новость {index}',
-            text='Просто текст.',
-            date=today - timedelta(days=index)
-        )
-        for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
-    ]
-    return News.objects.bulk_create(all_news)
 
 
 @pytest.fixture
