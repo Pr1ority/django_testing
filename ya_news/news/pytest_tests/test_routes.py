@@ -14,7 +14,7 @@ User = get_user_model()
     'name, args',
     (
         ('news:home', None),
-        ('news:detail', None),
+        ('news:detail', {'pk': 1}),
         ('users:login', None),
         ('users:logout', None),
         ('users:signup', None),
