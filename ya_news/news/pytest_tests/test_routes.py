@@ -14,7 +14,7 @@ User = get_user_model()
     'name, args',
     (
         ('news:home', None),
-        ('news:detail', pytest.lazy_fixture('news')),
+        ('news:detail', None),
         ('users:login', None),
         ('users:logout', None),
         ('users:signup', None),
