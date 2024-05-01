@@ -22,10 +22,7 @@ User = get_user_model()
 )
 @pytest.mark.django_db
 def test_pages_availability(client, name, args):
-    if args:
-        url = reverse(name, args=(args.id,))
-    else:
-        url = reverse(name)
+    url = reverse(name, args=(args.id,))
     response = client.get(url)
     assert response.status_code == HTTPStatus.OK
 
