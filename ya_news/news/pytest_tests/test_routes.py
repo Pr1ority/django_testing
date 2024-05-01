@@ -22,7 +22,9 @@ User = get_user_model()
 )
 @pytest.mark.django_db
 def test_pages_availability(client, name, args):
-    url = reverse(name, args=(args.id,))
+    if args is None:
+        args = ()
+    url = reverse(name, args=args)
     response = client.get(url)
     assert response.status_code == HTTPStatus.OK
 
@@ -40,6 +42,8 @@ def test_pages_availability(client, name, args):
 )
 def test_availability_for_comment_edit_and_delete(parametrized_client, name,
                                                   expected_status, comment):
+    if comment is None:
+        pytest.skip
     url = reverse(name, args=(comment.id,))
     response = parametrized_client.get(url)
     assert response.status_code == expected_status
