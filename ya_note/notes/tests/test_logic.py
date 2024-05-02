@@ -93,8 +93,6 @@ class TestSlug(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = User.objects.create(username='Пользователь')
-        cls.note = Note.objects.create(title='Заголовок', text='Текст',
-                                       author=cls.user)
         cls.auth_client = Client()
         cls.auth_client.force_login(cls.user)
         cls.form_data = {'title': 'Заголовок',
