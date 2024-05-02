@@ -34,7 +34,8 @@ class TestNoteCreation(TestCase):
 
     def test_user_can_create_note(self):
         response = self.auth_client.post(self.url, data=self.form_data)
-        self.assertRedirects(response, HTTPStatus.OK)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('notes:success'))
         notes_count = Note.objects.count()
         self.assertEqual(notes_count, 1)
         note = Note.objects.get()
@@ -76,7 +77,8 @@ class TestNoteEditDelete(TestCase):
 
     def test_author_can_edit_note(self):
         response = self.author_client.post(self.edit_url, data=self.form_data)
-        self.assertRedirects(response, HTTPStatus.OK)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, self.notes_url)
         self.note.refresh_from_db()
         self.assertEqual(self.note.text, self.NEW_NOTE_TEXT)
 
@@ -114,7 +116,8 @@ class TestSlug(TestCase):
         self.form_data.pop('slug')
         self.form_data['title'] = 'Новый заголовок'
         response = self.auth_client.post(url, data=self.form_data)
-        self.assertRedirects(response, reverse('notes:success'))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('notes:success'))
         notes_count = Note.objects.count()
         self.assertEqual(notes_count, 1)
         new_note = Note.objects.get()
