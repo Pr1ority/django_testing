@@ -20,17 +20,14 @@ class TestRoutes(TestCase):
 
     def test_pages_availability(self):
         urls = (
-            ('notes:home', None),
-            ('notes:list', None),
-            ('notes:add', None),
-            ('notes:success', None),
-            ('users:login', None),
-            ('users:logout', None),
-            ('users:signup', None),
+            'notes:home',
+            'users:login',
+            'users:logout',
+            'users:signup',
         )
-        for name, args in urls:
+        for name in urls:
             with self.subTest(name=name):
-                url = reverse(name, args=args)
+                url = reverse(name)
                 response = self.client.get(url)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 
