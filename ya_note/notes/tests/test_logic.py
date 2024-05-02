@@ -112,6 +112,7 @@ class TestSlug(TestCase):
     def test_empty_slug(self):
         url = reverse('notes:add')
         self.form_data.pop('slug')
+        self.form_data['title'] = 'Новый заголовок'
         response = self.auth_client.post(url, data=self.form_data)
         self.assertRedirects(response, reverse('notes:success'))
         notes_count = Note.objects.count()
