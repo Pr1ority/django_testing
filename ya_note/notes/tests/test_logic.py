@@ -19,16 +19,15 @@ class TestNoteCreation(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = User.objects.create(username='Пользователь')
-        cls.url = reverse('notes:detail', args=(cls.notes.id,))
+        cls.url = reverse('notes:add')
         cls.auth_client = Client()
         cls.auth_client.force_login(cls.user)
         cls.form_data = {'text': cls.NOTE_TEXT}
 
     def test_anonymous_user_cant_create_note(self):
-        url = reverse('notes:add')
-        response = self.client.post(url, data=self.form_data)
+        response = self.client.post(self.url, data=self.form_data)
         login_url = reverse('users:login')
-        expected_url = f'{login_url}?next={url}'
+        expected_url = f'{login_url}?next={self.url}'
         self.assertRedirects(response, expected_url)
         notes_count = Note.objects.count()
         self.assertEqual(notes_count, 0)
