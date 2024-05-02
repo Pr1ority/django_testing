@@ -62,8 +62,9 @@ class TestNoteEditDelete(TestCase):
         cls.form_data = {'text': cls.NEW_NOTE_TEXT}
 
     def test_author_can_delete_note(self):
+        url = reverse('notes:success')
         response = self.author_client.delete(self.delete_url)
-        self.assertRedirects(response, self.notes_url)
+        self.assertRedirects(response, url)
         notes_count = Note.objects.count()
         self.assertEqual(notes_count, 0)
 
