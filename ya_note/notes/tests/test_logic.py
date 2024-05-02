@@ -14,15 +14,15 @@ User = get_user_model()
 
 class TestNoteCreation(TestCase):
 
-    NOTE_TEXT = 'Текст заметки'
-
     @classmethod
     def setUpTestData(cls):
         cls.user = User.objects.create(username='Пользователь')
         cls.url = reverse('notes:add')
         cls.auth_client = Client()
         cls.auth_client.force_login(cls.user)
-        cls.form_data = {'text': cls.NOTE_TEXT}
+        cls.form_data = {'title': 'Заголовок',
+                         'text': 'Текст',
+                         'slug': 'slug'}
 
     def test_anonymous_user_cant_create_note(self):
         response = self.client.post(self.url, data=self.form_data)
@@ -34,23 +34,21 @@ class TestNoteCreation(TestCase):
 
     def test_user_can_create_note(self):
         response = self.auth_client.post(self.url, data=self.form_data)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse('notes:success'))
+        self.assertRedirects(response, reverse('notes:success'))
         notes_count = Note.objects.count()
         self.assertEqual(notes_count, 1)
         note = Note.objects.get()
-        self.assertEqual(note.text, self.NOTE_TEXT)
+        self.assertEqual(note.title, self.form_data['title'])
+        self.assertEqual(note.text, self.form_data['text'])
         self.assertEqual(note.author, self.user)
 
 
 class TestNoteEditDelete(TestCase):
-    NOTE_TEXT = 'Текст заметки'
-    NEW_NOTE_TEXT = 'Обновлённая заметка'
 
     @classmethod
     def setUpTestData(cls):
         cls.author = User.objects.create(username='Автор заметки')
-        cls.note = Note.objects.create(title='Заголовок', text=cls.NOTE_TEXT,
+        cls.note = Note.objects.create(title='Заголовок', text='Текст',
                                        author=cls.author)
         cls.author_client = Client()
         cls.author_client.force_login(cls.author)
@@ -60,7 +58,9 @@ class TestNoteEditDelete(TestCase):
         cls.edit_url = reverse('notes:edit', args=(cls.note.slug,))
         cls.delete_url = reverse('notes:delete', args=(cls.note.slug,))
         cls.notes_url = reverse('notes:list')
-        cls.form_data = {'text': cls.NEW_NOTE_TEXT}
+        cls.form_data = {'title': 'Заголовок',
+                         'text': 'Текст',
+                         'slug': 'slug'}
 
     def test_author_can_delete_note(self):
         url = reverse('notes:success')
@@ -77,21 +77,18 @@ class TestNoteEditDelete(TestCase):
 
     def test_author_can_edit_note(self):
         response = self.author_client.post(self.edit_url, data=self.form_data)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, self.notes_url)
+        self.assertRedirects(response, self.notes_url)
         self.note.refresh_from_db()
-        self.assertEqual(self.note.text, self.NEW_NOTE_TEXT)
+        self.assertEqual(self.note.text, self.form_data['text'])
 
     def test_user_cant_edit_note_of_another_user(self):
         response = self.reader_client.post(self.edit_url, data=self.form_data)
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
         self.note.refresh_from_db()
-        self.assertEqual(self.note.text, self.NOTE_TEXT)
+        self.assertEqual(self.note.text, self.form_data['text'])
 
 
 class TestSlug(TestCase):
-
-    NOTE_SLUG = 'Слаг заметки'
 
     @classmethod
     def setUpTestData(cls):
@@ -100,7 +97,9 @@ class TestSlug(TestCase):
                                        author=cls.user)
         cls.auth_client = Client()
         cls.auth_client.force_login(cls.user)
-        cls.form_data = {'slug': cls.NOTE_SLUG}
+        cls.form_data = {'title': 'Заголовок',
+                         'text': 'Текст',
+                         'slug': 'slug'}
 
     def test_not_unique_slug(self):
         url = reverse('notes:add')
@@ -116,8 +115,7 @@ class TestSlug(TestCase):
         self.form_data.pop('slug')
         self.form_data['title'] = 'Новый заголовок'
         response = self.auth_client.post(url, data=self.form_data)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse('notes:success'))
+        self.assertRedirects(response, reverse('notes:success'))
         notes_count = Note.objects.count()
         self.assertEqual(notes_count, 1)
         new_note = Note.objects.get()
