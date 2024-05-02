@@ -18,11 +18,10 @@ class TestNoteCreation(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.author = User.objects.create(username='Автор')
-        cls.notes = Note.objects.create(title='Заголовок', text='Текст',
-                                        author=cls.author)
-        cls.url = reverse('notes:detail', args=(cls.notes.id,))
         cls.user = User.objects.create(username='Пользователь')
+        cls.notes = Note.objects.create(title='Заголовок', text='Текст',
+                                        author=cls.user)
+        cls.url = reverse('notes:detail', args=(cls.notes.id,))
         cls.auth_client = Client()
         cls.auth_client.force_login(cls.user)
         cls.form_data = {'text': cls.NOTE_TEXT}
@@ -48,8 +47,9 @@ class TestNoteEditDelete(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.note = Note.objects.create(title='Заголовок', text=cls.NOTE_TEXT)
         cls.author = User.objects.create(username='Автор заметки')
+        cls.note = Note.objects.create(title='Заголовок', text=cls.NOTE_TEXT,
+                                       author=cls.author)
         cls.author_client = Client()
         cls.author_client.force_login(cls.author)
         cls.reader = User.objects.create(username='Читатель')
@@ -91,8 +91,9 @@ class TestSlug(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.note = Note.objects.create(title='Заголовок', text='Текст')
         cls.user = User.objects.create(username='Пользователь')
+        cls.note = Note.objects.create(title='Заголовок', text='Текст',
+                                       author=cls.user)
         cls.auth_client = Client()
         cls.auth_client.force_login(cls.user)
         cls.form_data = {'slug': cls.NOTE_SLUG}
