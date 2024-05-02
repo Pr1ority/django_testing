@@ -11,21 +11,22 @@ User = get_user_model()
 
 
 @pytest.mark.parametrize(
-    'name, args',
+    'name',
     (
-        ('news:home', None),
-        ('news:detail',),
-        ('users:login', None),
-        ('users:logout', None),
-        ('users:signup', None),
+        'news:home',
+        'news:detail',
+        'users:login',
+        'users:logout',
+        'users:signup',
     ),
 )
 @pytest.mark.django_db
 def test_pages_availability(client, name, args):
     if name == 'news:detail':
         news_id = pytest.lazy_fixture('news').id
-        args = (news_id,)
-    url = reverse(name, args=args)
+        url = reverse(name, args=(news_id,))
+    else:
+        url = reverse(name)
     response = client.get(url)
     assert response.status_code == HTTPStatus.OK
 
