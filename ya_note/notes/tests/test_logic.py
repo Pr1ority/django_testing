@@ -100,6 +100,8 @@ class TestSlug(TestCase):
                          'slug': 'slug'}
 
     def test_not_unique_slug(self):
+        self.note = Note.objects.create(title='Заголовок', text='Текст',
+                                        author=self.user)
         url = reverse('notes:add')
         self.form_data['slug'] = self.note.slug
         response = self.auth_client.post(url, data=self.form_data)
