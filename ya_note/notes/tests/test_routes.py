@@ -50,7 +50,7 @@ class TestRoutes(TestCase):
             ('notes:delete', self.notes.slug)
             ('notes:list', None)
             ('notes:success', None)
-            ('notes:add', None) 
+            ('notes:add', None)
             ('notes:detail', self.notes.slug)
         )
         login_url = reverse('users:login')
