@@ -39,7 +39,7 @@ class TestRoutes(TestCase):
         self.assertIsInstance(response.context['form'], NoteForm)
 
     def test_edit_note_page_contains_form(self):
-        url = reverse('notes:edit', args=(self.note.id,))
+        url = reverse('notes:edit', args=(self.note.slug,))
         self.client.force_login(self.author)
         response = self.client.get(url)
         self.assertIn('form', response.context)
