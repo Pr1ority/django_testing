@@ -46,12 +46,12 @@ class TestRoutes(TestCase):
 
     def test_redirect_for_anonymous_client(self):
         urls = (
-            ('notes:edit', self.notes.slug)
-            ('notes:delete', self.notes.slug)
-            ('notes:list', None)
-            ('notes:success', None)
-            ('notes:add', None)
-            ('notes:detail', self.notes.slug)
+            ('notes:edit', self.notes.slug),
+            ('notes:delete', self.notes.slug),
+            ('notes:list', None),
+            ('notes:success', None),
+            ('notes:add', None),
+            ('notes:detail', self.notes.slug),
         )
         login_url = reverse('users:login')
         for name, args in urls:
