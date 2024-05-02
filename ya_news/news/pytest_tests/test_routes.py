@@ -21,7 +21,7 @@ User = get_user_model()
     ),
 )
 @pytest.mark.django_db
-def test_pages_availability(client, name, args):
+def test_pages_availability(client, name):
     if name == 'news:detail':
         news_id = pytest.lazy_fixture('news').id
         url = reverse(name, args=(news_id,))
