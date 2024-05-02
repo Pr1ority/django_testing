@@ -12,9 +12,9 @@ class TestRoutes(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.note = Note.objects.create(title='Заголовок', text='Текст')
         cls.author = User.objects.create(username='Автор')
         cls.reader = User.objects.create(username='Читатель')
+        cls.note = Note.objects.create(title='Заголовок', text='Текст', author=cls.author)
 
     def test_note_in_list_for_author(self):
         url = reverse('notes:list')

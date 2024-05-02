@@ -18,9 +18,9 @@ class TestNoteCreation(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.notes = Note.objects.create(title='Заголовок', text='Текст')
-        cls.url = reverse('notes:detail', args=(cls.notes.id,))
         cls.user = User.objects.create(username='Пользователь')
+        cls.notes = Note.objects.create(title='Заголовок', text='Текст', author=cls.user)
+        cls.url = reverse('notes:detail', args=(cls.notes.id,))
         cls.auth_client = Client()
         cls.auth_client.force_login(cls.user)
         cls.form_data = {'text': cls.NOTE_TEXT}
