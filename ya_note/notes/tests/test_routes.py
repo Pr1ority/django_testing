@@ -28,7 +28,7 @@ class TestRoutes(BaseNoteTestCase):
         cases = [
             (TestURLs.get_edit_url(self, self.note.slug), self.author_client,
              HTTPStatus.OK),
-            (TestURLs.get_delete_url(self.note.slug), self.author_client,
+            (TestURLs.get_delete_url(self, self.note.slug), self.author_client,
              HTTPStatus.OK),
             (TestURLs.get_detail_url(self.note.slug), self.author_client,
              HTTPStatus.OK),
@@ -47,7 +47,7 @@ class TestRoutes(BaseNoteTestCase):
     def test_redirect_for_anonymous_client(self):
         urls = (
             (TestURLs.get_edit_url(self, self.note.slug), ),
-            (TestURLs.get_delete_url(self.note.slug), ),
+            (TestURLs.get_delete_url(self, self.note.slug), ),
             (TestURLs.LIST_URL, None),
             (TestURLs.SUCCESS_URL, None),
             (TestURLs.ADD_URL, None),
