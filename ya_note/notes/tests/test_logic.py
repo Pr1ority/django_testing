@@ -67,7 +67,7 @@ class TestNoteCreation(BaseNoteTestCase):
         self.assertRedirects(response, TestURLs.SUCCESS_URL)
         self.assertEqual(self.note.text, self.form_data['text'])
         self.assertEqual(self.note.title, self.form_data['title'])
-        self.assertEqual(self.note.author, self.user)
+        self.assertEqual(self.note.author, self.author)
         self.assertEqual(self.note.slug, self.form_data['slug'])
 
     def test_user_cant_edit_note_of_another_user(self):
