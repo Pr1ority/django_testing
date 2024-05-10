@@ -59,8 +59,7 @@ def test_availability_for_comment_edit_and_delete(parametrized_client,
         DELETE_URL,
     ),
 )
-def test_redirect_for_anonymous_client(url, client, comment):
-    login_url = LOGIN_URL
+def test_redirect_for_anonymous_client(url, client, login_url):
     redirect_url = f'{login_url}?next={url}'
     response = client.get(url)
     assertRedirects(response, redirect_url)
