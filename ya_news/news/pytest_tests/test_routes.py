@@ -1,66 +1,66 @@
-import pytest
 from http import HTTPStatus
 
+import pytest
 from django.contrib.auth import get_user_model
-from django.urls import reverse
-
 from pytest_django.asserts import assertRedirects
 
 
 User = get_user_model()
 
+HOME_URL = pytest.lazy_fixture('home_url')
+DETAIL_URL = pytest.lazy_fixture('detail_url')
+LOGIN_URL = pytest.lazy_fixture('login_url')
+LOGOUT_URL = pytest.lazy_fixture('logout_url')
+SIGNUP_URL = pytest.lazy_fixture('signup_url')
+EDIT_URL = pytest.lazy_fixture('edit_url')
+DELETE_URL = pytest.lazy_fixture('delete_url')
+
 
 @pytest.mark.parametrize(
-    'name',
+    'url',
     (
-        'news:home',
-        'news:detail',
-        'users:login',
-        'users:logout',
-        'users:signup',
+        HOME_URL,
+        DETAIL_URL,
+        LOGIN_URL,
+        LOGOUT_URL,
+        SIGNUP_URL,
     ),
 )
-@pytest.mark.django_db
-def test_pages_availability(client, name, news):
-    if name == 'news:detail':
-        news_id = news.id
-        url = reverse(name, args=(news_id,))
-    else:
-        url = reverse(name)
+def test_pages_availability(client, url):
     response = client.get(url)
     assert response.status_code == HTTPStatus.OK
 
 
 @pytest.mark.parametrize(
-    'parametrized_client, expected_status',
+    'parametrized_client, expected_status, url',
     (
-        (pytest.lazy_fixture('not_author_client'), HTTPStatus.NOT_FOUND),
-        (pytest.lazy_fixture('author_client'), HTTPStatus.OK)
+        (pytest.lazy_fixture('not_author_client'), HTTPStatus.NOT_FOUND,
+         EDIT_URL),
+        (pytest.lazy_fixture('not_author_client'), HTTPStatus.NOT_FOUND,
+         DELETE_URL),
+        (pytest.lazy_fixture('author_client'), HTTPStatus.OK, EDIT_URL),
+        (pytest.lazy_fixture('author_client'), HTTPStatus.OK, DELETE_URL),
     ),
 )
-@pytest.mark.parametrize(
-    'name',
-    ('news:edit', 'news:delete'),
-)
-def test_availability_for_comment_edit_and_delete(parametrized_client, name,
-                                                  expected_status, comment):
+def test_availability_for_comment_edit_and_delete(parametrized_client,
+                                                  expected_status, url,
+                                                  comment):
     if comment is None:
         pytest.skip
-    url = reverse(name, args=(comment.id,))
+
     response = parametrized_client.get(url)
     assert response.status_code == expected_status
 
 
 @pytest.mark.parametrize(
-    'name',
+    'url',
     (
-        ('news:delete'),
-        ('news:edit'),
+        EDIT_URL,
+        DELETE_URL,
     ),
 )
-def test_redirect_for_anonymous_client(name, client, comment):
-    login_url = reverse('users:login')
-    url = reverse(name, args=(comment.id,))
+def test_redirect_for_anonymous_client(url, client, comment):
+    login_url = LOGIN_URL
     redirect_url = f'{login_url}?next={url}'
     response = client.get(url)
     assertRedirects(response, redirect_url)

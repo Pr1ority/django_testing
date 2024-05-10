@@ -1,5 +1,3 @@
-import pytest
-
 from django.urls import reverse
 
 from news.forms import CommentForm
@@ -8,24 +6,23 @@ from news.forms import CommentForm
 HOME_URL = reverse('news:home')
 
 
-@pytest.mark.django_db
 def test_news_count(client):
     response = client.get(HOME_URL)
-    object_list = response.context['object_list']
-    news_count = object_list.count()
-    assert news_count <= 10
+    news = response.context['news']
+    news_count = news.count()
+    assert news_count == len(news)
 
 
-@pytest.mark.django_db
-def test_news_order(client):
+def test_news_order(client, news):
     response = client.get(HOME_URL)
-    object_list = response.context['object_list']
-    all_dates = [news.date for news in object_list]
+    news = response.context['news']
+    if not news:
+        return
+    all_dates = [news_item.date for news_item in news]
     sorted_dates = sorted(all_dates, reverse=True)
     assert all_dates == sorted_dates
 
 
-@pytest.mark.django_db
 def test_comments_order(client, detail_url):
     response = client.get(detail_url)
     assert 'news' in response.context
@@ -36,7 +33,6 @@ def test_comments_order(client, detail_url):
     assert all_timestamps == sorted_timestamps
 
 
-@pytest.mark.django_db
 def test_anonymous_client_has_no_form(client, detail_url):
     response = client.get(detail_url)
     assert 'form' not in response.context

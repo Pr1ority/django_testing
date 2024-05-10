@@ -1,7 +1,6 @@
-import pytest
-
 from datetime import timedelta
 
+import pytest
 from django.utils import timezone
 from django.test.client import Client
 from django.urls import reverse
@@ -58,7 +57,7 @@ def detail_url(news):
 
 
 @pytest.fixture
-def comment_sorted(news, author):
+def comments_bulk(news, author):
     now = timezone.now()
     for index in range(10):
         comment = Comment.objects.create(
@@ -66,14 +65,6 @@ def comment_sorted(news, author):
         )
         comment.created = now + timedelta(days=index)
         comment.save()
-    return comment
-
-
-@pytest.fixture
-def form_data():
-    return {
-        'text': 'Текст комментария',
-    }
 
 
 @pytest.fixture
@@ -89,3 +80,28 @@ def edit_url(comment):
 @pytest.fixture
 def delete_url(comment):
     return reverse('news:delete', args=(comment.id,))
+
+
+@pytest.fixture(autouse=True)
+def enable_db_access_for_all_tests(db):
+    pass
+
+
+@pytest.fixture
+def home_url():
+    return reverse('news:home')
+
+
+@pytest.fixture
+def login_url():
+    return reverse('users:login')
+
+
+@pytest.fixture
+def logout_url():
+    return reverse('users:logout')
+
+
+@pytest.fixture
+def signup_url():
+    return reverse('users:signup')
