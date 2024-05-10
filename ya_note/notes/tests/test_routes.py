@@ -30,7 +30,7 @@ class TestRoutes(BaseNoteTestCase):
              HTTPStatus.OK),
             (TestURLs.get_delete_url(self, self.note.slug), self.author_client,
              HTTPStatus.OK),
-            (TestURLs.get_detail_url(self.note.slug), self.author_client,
+            (TestURLs.get_detail_url(self, self.note.slug), self.author_client,
              HTTPStatus.OK),
             (TestURLs.get_edit_url(self.note.slug), self.reader_client,
              HTTPStatus.NOT_FOUND),
@@ -51,7 +51,7 @@ class TestRoutes(BaseNoteTestCase):
             (TestURLs.LIST_URL, None),
             (TestURLs.SUCCESS_URL, None),
             (TestURLs.ADD_URL, None),
-            (TestURLs.get_detail_url(self.note.slug), ),
+            (TestURLs.get_detail_url(self, self.note.slug), ),
         )
         for url, args in urls:
             with self.subTest(url=url):
