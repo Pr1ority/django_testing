@@ -30,8 +30,8 @@ class BaseNoteTestCase(TestCase):
     def test_note_in_list_for_author(self):
         url = TestURLs.LIST_URL
         response = self.client.get(url)
-        object_list = response.context['object_list']
-        self.assertIn(self.note, object_list)
+        notes = response.context['object_list']
+        self.assertIn(self.note, notes)
         self.assertEqual(self.note.title, 'Заголовок')
         self.assertEqual(self.note.text, 'Текст')
         self.assertEqual(self.note.author, self.author)
@@ -39,8 +39,8 @@ class BaseNoteTestCase(TestCase):
     def test_note_not_in_list_for_another_user(self):
         url = TestURLs.LIST_URL
         response = self.client.get(url)
-        object_list = response.context['object_list']
-        self.assertNotIn(self.note, object_list)
+        notes = response.context['object_list']
+        self.assertNotIn(self.note, notes)
 
     def test_page_contains_form(self):
         urls = {'add': TestURLs.ADD_URL,

@@ -32,11 +32,11 @@ class TestRoutes(BaseNoteTestCase):
              HTTPStatus.OK),
             (TestURLs.get_detail_url(self, self.note.slug), self.author_client,
              HTTPStatus.OK),
-            (TestURLs.get_edit_url(self.note.slug), self.reader_client,
+            (TestURLs.get_edit_url(self, self.note.slug), self.reader_client,
              HTTPStatus.NOT_FOUND),
-            (TestURLs.get_delete_url(self.note.slug), self.reader_client,
+            (TestURLs.get_delete_url(self, self.note.slug), self.reader_client,
              HTTPStatus.NOT_FOUND),
-            (TestURLs.get_detail_url(self.note.slug), self.reader_client,
+            (TestURLs.get_detail_url(self, self.note.slug), self.reader_client,
              HTTPStatus.NOT_FOUND),
         ]
         for url, client, expected_status in cases:
