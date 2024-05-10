@@ -10,11 +10,11 @@ class TestURLs:
     LOGOUT_URL = reverse('users:logout')
     SIGNUP_URL = reverse('users:signup')
 
-    def get_edit_url(slug):
+    def get_edit_url(self, slug):
         return reverse('notes:edit', args=[slug])
 
-    def get_delete_url(slug):
+    def get_delete_url(self, slug):
         return reverse('notes:delete', args=[slug])
 
-    def get_detail_url(slug):
+    def get_detail_url(self, slug):
         return reverse('notes:detail', args=[slug])
