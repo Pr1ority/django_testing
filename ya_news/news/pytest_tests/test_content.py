@@ -1,57 +1,47 @@
-from django.contrib.auth import get_user_model
-from django.test import TestCase, Client
 from django.urls import reverse
 
-from notes.models import Note
-from notes.forms import NoteForm
-from .test_urls import TestURLs
-
-User = get_user_model()
+from news.forms import CommentForm
 
 
-class BaseNoteTestCase(TestCase):
+HOME_URL = reverse('news:home')
 
-    @classmethod
-    def setUpTestData(cls):
-        cls.author = User.objects.create(username='Автор')
-        cls.reader = User.objects.create(username='Читатель')
-        cls.author_client = Client()
-        cls.client.force_login(cls.author)
-        cls.reader_client = Client()
-        cls.client.force_login(cls.reader)
-        cls.note = cls.create_note()
 
-    def create_note(self, title='Заголовок', text='Текст', slug='slug',
-                    author=None):
-        if author is None:
-            author = self.author
-        return Note.objects.create(title=title, text=text, slug=slug,
-                                   author=author)
+def test_news_count(client):
+    response = client.get(HOME_URL)
+    assert 'news' in response.context
+    news = response.context['news']
+    news_count = news.count()
+    assert news_count == len(news)
 
-    def test_note_in_list_for_author(self):
-        url = TestURLs.LIST_URL
-        response = self.client.get(url)
-        object_list = response.context['object_list']
-        self.assertIn(self.note, object_list)
-        self.assertEqual(self.note.title, 'Заголовок')
-        self.assertEqual(self.note.text, 'Текст')
-        self.assertEqual(self.note.author, self.author)
 
-    def test_note_not_in_list_for_another_user(self):
-        url = TestURLs.LIST_URL
-        response = self.client.get(url)
-        object_list = response.context['object_list']
-        self.assertNotIn(self.note, object_list)
+def test_news_order(client, news):
+    response = client.get(HOME_URL)
+    assert 'news' in response.context
+    news = response.context['news']
+    if not news:
+        return
+    all_dates = [news_item.date for news_item in news]
+    sorted_dates = sorted(all_dates, reverse=True)
+    assert all_dates == sorted_dates
 
-    def test_page_contains_form(self):
-        urls = {'add': TestURLs.ADD_URL,
-                'edit': TestURLs.get_edit_url(self.note.slug)}
-        for action, route_name in urls.items():
-            with self.subTest(action=action):
-                if action == 'add':
-                    url = reverse(route_name)
-                elif action == 'edit':
-                    url = reverse(route_name, args=(self.note.slug,))
-                response = self.client.get(url)
-                self.assertIn('form', response.context)
-                self.assertIsInstance(response.context['form'], NoteForm)
+
+def test_comments_order(client, detail_url):
+    response = client.get(detail_url)
+    assert 'news' in response.context
+    news = response.context['news']
+    all_comments = news.comment_set.all()
+    all_timestamps = [comment.created for comment in all_comments]
+    sorted_timestamps = sorted(all_timestamps)
+    assert all_timestamps == sorted_timestamps
+
+
+def test_anonymous_client_has_no_form(client, detail_url):
+    response = client.get(detail_url)
+    assert 'form' not in response.context
+
+
+def test_authorized_client_has_form(client, author, detail_url):
+    client.force_login(author)
+    response = client.get(detail_url)
+    assert 'form' in response.context
+    assert isinstance(response.context['form'], CommentForm)
