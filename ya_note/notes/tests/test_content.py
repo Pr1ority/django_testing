@@ -11,7 +11,6 @@ User = get_user_model()
 
 class BaseNoteTestCase(TestCase):
 
-    @classmethod
     def setUp(self):
         self.author = User.objects.create(username='Автор')
         self.reader = User.objects.create(username='Читатель')
