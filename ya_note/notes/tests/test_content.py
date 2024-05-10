@@ -44,7 +44,7 @@ class BaseNoteTestCase(TestCase):
 
     def test_page_contains_form(self):
         urls = {'add': TestURLs.ADD_URL,
-                'edit': TestURLs.get_edit_url(self.note.slug)}
+                'edit': TestURLs.get_edit_url(self, self.note.slug)}
         for action, route_name in urls.items():
             with self.subTest(action=action):
                 if action == 'add':
