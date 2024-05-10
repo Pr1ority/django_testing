@@ -16,9 +16,9 @@ class BaseNoteTestCase(TestCase):
         cls.author = User.objects.create(username='Автор')
         cls.reader = User.objects.create(username='Читатель')
         cls.author_client = Client()
-        cls.client.force_login(cls.author)
+        cls.author_client.force_login(cls.author)
         cls.reader_client = Client()
-        cls.client.force_login(cls.reader)
+        cls.reader_client.force_login(cls.reader)
         cls.note = cls.create_note()
 
     def create_note(self, title='Заголовок', text='Текст', slug='slug',
