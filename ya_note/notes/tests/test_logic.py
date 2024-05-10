@@ -23,7 +23,7 @@ class TestNoteCreation(BaseNoteTestCase):
         self.form_data = {'title': 'Заголовок',
                           'text': 'Текст',
                           'slug': 'slug'}
-        self.edit_url = TestURLs.get_edit_url(self.note.slug)
+        self.edit_url = TestURLs.get_edit_url(self, self.note.slug)
         self.delete_url = TestURLs.get_delete_url(self.note.slug)
         self.notes_url = TestURLs.LIST_URL
 
