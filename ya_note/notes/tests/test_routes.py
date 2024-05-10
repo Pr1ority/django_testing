@@ -1,65 +1,62 @@
 from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
-from django.test import TestCase
 from django.urls import reverse
 
-from notes.models import Note
+from .test_urls import TestURLs
+from .test_content import BaseNoteTestCase
 
 User = get_user_model()
 
 
-class TestRoutes(TestCase):
+class TestRoutes(BaseNoteTestCase):
+    def setUp(self):
+        super().setUp()
 
-    @classmethod
-    def setUpTestData(cls):
-        cls.author = User.objects.create(username='Автор')
-        cls.reader = User.objects.create(username='Читатель')
-        cls.notes = Note.objects.create(title='Заголовок', text='Текст',
-                                        author=cls.author)
-
-    def test_pages_availability(self):
+    def test_status_codes(self):
         urls = (
-            'notes:home',
-            'users:login',
-            'users:logout',
-            'users:signup',
+            TestURLs.HOME_URL,
+            TestURLs.LOGIN_URL,
+            TestURLs.LOGOUT_URL,
+            TestURLs.SIGNUP_URL,
         )
-        for name in urls:
-            with self.subTest(name=name):
-                url = reverse(name)
+        for url in urls:
+            with self.subTest(url=url):
                 response = self.client.get(url)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_availability_for_edit_and_delete(self):
-        users_statuses = (
-            (self.author, HTTPStatus.OK),
-            (self.reader, HTTPStatus.NOT_FOUND),
-        )
-        for user, status in users_statuses:
-            self.client.force_login(user)
-            for name in ('notes:edit', 'notes:delete', 'notes:detail'):
-                with self.subTest(user=user, name=name):
-                    url = reverse(name, args=(self.notes.slug,))
-                    response = self.client.get(url)
-                    self.assertEqual(response.status_code, status)
+        cases = [
+            (TestURLs.get_edit_url(self.note.slug), self.author_client,
+             HTTPStatus.OK),
+            (TestURLs.get_delete_url(self.note.slug), self.author_client,
+             HTTPStatus.OK),
+            (TestURLs.get_detail_url(self.note.slug), self.author_client,
+             HTTPStatus.OK),
+            (TestURLs.get_edit_url(self.note.slug), self.reader_client,
+             HTTPStatus.NOT_FOUND),
+            (TestURLs.get_delete_url(self.note.slug), self.reader_client,
+             HTTPStatus.NOT_FOUND),
+            (TestURLs.get_detail_url(self.note.slug), self.reader_client,
+             HTTPStatus.NOT_FOUND),
+        ]
+        for url, client, expected_status in cases:
+            with self.subTest(url=url):
+                response = client.get(url)
+                self.assertEqual(response.status_code, expected_status)
 
     def test_redirect_for_anonymous_client(self):
         urls = (
-            ('notes:edit', self.notes.slug),
-            ('notes:delete', self.notes.slug),
-            ('notes:list', None),
-            ('notes:success', None),
-            ('notes:add', None),
-            ('notes:detail', self.notes.slug),
+            (TestURLs.get_edit_url(self.note.slug), ),
+            (TestURLs.get_delete_url(self.note.slug), ),
+            (TestURLs.LIST_URL, None),
+            (TestURLs.SUCCESS_URL, None),
+            (TestURLs.ADD_URL, None),
+            (TestURLs.get_detail_url(self.note.slug), ),
         )
-        login_url = reverse('users:login')
-        for name, args in urls:
-            with self.subTest(name=name):
+        for url, args in urls:
+            with self.subTest(url=url):
                 if args is not None:
-                    url = reverse(name, args=(args,))
-                else:
-                    url = reverse(name)
-                redirect_url = f'{login_url}?next={url}'
+                    url = reverse(url, args=(args,))
                 response = self.client.get(url)
+                redirect_url = f'{TestURLs.LOGIN_URL}?next={url}'
                 self.assertRedirects(response, redirect_url)
