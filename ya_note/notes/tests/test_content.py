@@ -29,7 +29,7 @@ class BaseNoteTestCase(TestCase):
 
     def test_note_in_list_for_author(self):
         url = TestURLs.LIST_URL
-        response = self.client.get(url)
+        response = self.author_client.get(url)
         notes = response.context['object_list']
         self.assertIn(self.note, notes)
         self.assertEqual(self.note.title, 'Заголовок')
@@ -38,7 +38,7 @@ class BaseNoteTestCase(TestCase):
 
     def test_note_not_in_list_for_another_user(self):
         url = TestURLs.LIST_URL
-        response = self.client.get(url)
+        response = self.reader_client.get(url)
         notes = response.context['object_list']
         self.assertNotIn(self.note, notes)
 
