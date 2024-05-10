@@ -8,16 +8,14 @@ HOME_URL = reverse('news:home')
 
 def test_news_count(client):
     response = client.get(HOME_URL)
-    assert 'news' in response.context
-    news = response.context['news']
+    news = response.context['object_list']
     news_count = news.count()
     assert news_count == len(news)
 
 
 def test_news_order(client, news):
     response = client.get(HOME_URL)
-    assert 'news' in response.context
-    news = response.context['news']
+    news = response.context['object_list']
     if not news:
         return
     all_dates = [news_item.date for news_item in news]
