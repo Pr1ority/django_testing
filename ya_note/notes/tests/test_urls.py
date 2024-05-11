@@ -10,7 +10,7 @@ class TestURLs:
     HOME_URL = reverse('notes:home')
     LOGOUT_URL = reverse('users:logout')
     SIGNUP_URL = reverse('users:signup')
-    
+
     def __init__(self, slug):
         self.slug = slug
         self.EDIT_URL = reverse('notes:edit', args=(self.slug,))
