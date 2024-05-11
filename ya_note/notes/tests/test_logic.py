@@ -23,8 +23,8 @@ class TestNoteCreation(BaseNoteTestCase):
         self.form_data = {'title': 'Заголовок',
                           'text': 'Текст',
                           'slug': 'slug'}
-        self.edit_url = TestURLs.get_edit_url(self, self.note.slug)
-        self.delete_url = TestURLs.get_delete_url(self, self.note.slug)
+        self.edit_url = TestURLs.EDIT_URL
+        self.delete_url = TestURLs.DELETE_URL
         self.notes_url = TestURLs.LIST_URL
 
     def test_anonymous_user_cant_create_note(self):

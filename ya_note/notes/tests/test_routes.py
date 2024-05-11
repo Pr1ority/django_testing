@@ -26,17 +26,17 @@ class TestRoutes(BaseNoteTestCase):
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 
         cases = [
-            (TestURLs.get_edit_url(self, self.note.slug), self.author_client,
+            (TestURLs.EDIT_URL, self.author_client,
              HTTPStatus.OK),
-            (TestURLs.get_delete_url(self, self.note.slug), self.author_client,
+            (TestURLs.DELETE_URL, self.author_client,
              HTTPStatus.OK),
-            (TestURLs.get_detail_url(self, self.note.slug), self.author_client,
+            (TestURLs.DETAIL_URL, self.author_client,
              HTTPStatus.OK),
-            (TestURLs.get_edit_url(self, self.note.slug), self.reader_client,
+            (TestURLs.EDIT_URL, self.reader_client,
              HTTPStatus.NOT_FOUND),
-            (TestURLs.get_delete_url(self, self.note.slug), self.reader_client,
+            (TestURLs.DELETE_URL, self.reader_client,
              HTTPStatus.NOT_FOUND),
-            (TestURLs.get_detail_url(self, self.note.slug), self.reader_client,
+            (TestURLs.DETAIL_URL, self.reader_client,
              HTTPStatus.NOT_FOUND),
         ]
         for url, client, expected_status in cases:
@@ -46,12 +46,12 @@ class TestRoutes(BaseNoteTestCase):
 
     def test_redirect_for_anonymous_client(self):
         urls = (
-            (TestURLs.get_edit_url(self, self.note.slug), ),
-            (TestURLs.get_delete_url(self, self.note.slug), ),
+            (TestURLs.EDIT_URL, ),
+            (TestURLs.DELETE_URL, ),
             (TestURLs.LIST_URL, None),
             (TestURLs.SUCCESS_URL, None),
             (TestURLs.ADD_URL, None),
-            (TestURLs.get_detail_url(self, self.note.slug), ),
+            (TestURLs.DETAIL_URL, ),
         )
         for url, args in urls:
             with self.subTest(url=url):
