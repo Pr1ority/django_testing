@@ -20,7 +20,7 @@ class BaseNoteTestCase(TestCase):
         self.reader_client.force_login(self.reader)
         self.note = self.create_note()
 
-    def create_note(self, title='Заголовок', text='Текст', slug='slug',
+    def create_note(self, title='Заголовок', text='Текст', slug='notes_slug',
                     author=None):
         if author is None:
             author = self.author
