@@ -42,14 +42,14 @@ class BaseNoteTestCase(TestCase):
         notes = response.context['object_list']
         self.assertNotIn(self.note, notes)
 
-    def test_note_page_contains_form(self):
-        urls = [
-            ('notes:add', None),
-            ('notes:edit', (self.note.slug,))
-        ]
-        self.client.force_login(self.author)
-        for url_name, args in urls:
-            url = reverse(url_name, args=args)
-            response = self.client.get(url)
-            self.assertIn('form', response.context)
-            self.assertIsInstance(response.context['form'], NoteForm)
+    def test_form_on_pages(self):
+        pages = {
+            'add': reverse('notes:add'),
+            'edit': reverse('notes:edit', args=(self.note.slug,))
+        }
+
+        for page_name, url in pages.items():
+            with self.subTest(page_name=page_name):
+                response = self.author_client.get(url)
+                self.assertIn('form', response.context)
+                self.assertIsInstance(response.context['form'], NoteForm)

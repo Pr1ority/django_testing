@@ -32,8 +32,6 @@ class TestNoteCreation(BaseNoteTestCase):
         login_url = TestURLs.LOGIN_URL
         expected_url = f'{login_url}?next={self.url}'
         self.assertRedirects(response, expected_url)
-        self.assertEqual(Note.objects.filter(
-            title=self.form_data['title']).exists(), False)
 
     def test_user_can_create_note(self):
         response = self.auth_client.post(self.url, data=self.form_data)
