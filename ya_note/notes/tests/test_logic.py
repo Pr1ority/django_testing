@@ -22,7 +22,7 @@ class TestNoteCreation(BaseNoteTestCase):
         self.auth_client.force_login(self.user)
         self.form_data = {'title': 'Заголовок',
                           'text': 'Текст',
-                          'slug': 'slug'}
+                          'notes_slug': 'notes_slug'}
         slug = self.note.slug
         self.urls = TestURLs(slug)
         self.edit_url = self.urls.EDIT_URL
@@ -44,7 +44,7 @@ class TestNoteCreation(BaseNoteTestCase):
         self.assertEqual(note.title, self.form_data['title'])
         self.assertEqual(note.text, self.form_data['text'])
         self.assertEqual(note.author, self.user)
-        self.assertEqual(note.slug, self.form_data['slug'])
+        self.assertEqual(note.slug, self.form_data['notes_slug'])
 
     def test_author_can_delete_note(self):
         url = TestURLs.SUCCESS_URL
@@ -68,7 +68,7 @@ class TestNoteCreation(BaseNoteTestCase):
         self.assertEqual(self.note.text, self.form_data['text'])
         self.assertEqual(self.note.title, self.form_data['title'])
         self.assertEqual(self.note.author, self.author)
-        self.assertEqual(self.note.slug, self.form_data['slug'])
+        self.assertEqual(self.note.slug, self.form_data['notes_slug'])
 
     def test_user_cant_edit_note_of_another_user(self):
         response = self.reader_client.post(self.edit_url, data=self.form_data)
@@ -91,7 +91,7 @@ class TestNoteCreation(BaseNoteTestCase):
 
     def test_empty_slug(self):
         url = TestURLs.ADD_URL
-        self.form_data.pop('slug')
+        self.form_data.pop('notes_slug')
         response = self.auth_client.post(url, data=self.form_data)
         self.assertRedirects(response, TestURLs.SUCCESS_URL)
         self.assertEqual(Note.objects.filter(

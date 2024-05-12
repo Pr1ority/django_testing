@@ -48,12 +48,12 @@ class TestRoutes(BaseNoteTestCase):
 
     def test_redirect_for_anonymous_client(self):
         urls = (
-            (self.urls.EDIT_URL, ),
-            (self.urls.DELETE_URL, ),
+            (self.urls.EDIT_URL, None),
+            (self.urls.DELETE_URL, None),
             (TestURLs.LIST_URL, None),
             (TestURLs.SUCCESS_URL, None),
             (TestURLs.ADD_URL, None),
-            (self.urls.DETAIL_URL, ),
+            (self.urls.DETAIL_URL, None),
         )
         for url, args in urls:
             with self.subTest(url=url):
