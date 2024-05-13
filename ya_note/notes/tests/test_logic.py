@@ -43,7 +43,7 @@ class TestNoteCreation(BaseNoteTestCase):
         note = Note.objects.first()
         self.assertEqual(note.title, self.form_data['title'])
         self.assertEqual(note.text, self.form_data['text'])
-        self.assertEqual(note.author, self.user)
+        self.assertEqual(note.author, self.author)
         self.assertEqual(note.slug, self.form_data['notes_slug'])
 
     def test_author_can_delete_note(self):
@@ -90,6 +90,7 @@ class TestNoteCreation(BaseNoteTestCase):
         self.assertEqual(self.note.slug, self.note.slug)
 
     def test_empty_slug(self):
+        Note.objects.all().delete()
         url = TestURLs.ADD_URL
         self.form_data.pop('notes_slug')
         response = self.auth_client.post(url, data=self.form_data)
