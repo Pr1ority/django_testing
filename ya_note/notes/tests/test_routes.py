@@ -1,32 +1,21 @@
 from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
-from django.urls import reverse
 
-from .test_urls import TestURLs
-from .test_content import BaseNoteTestCase
+from .test_base import TestURLs, BaseNoteTestCase, LIST_URL, ADD_URL, LOGIN_URL, SUCCESS_URL, HOME_URL, LOGOUT_URL, SIGNUP_URL
 
 User = get_user_model()
 
 
 class TestRoutes(BaseNoteTestCase):
-    def setUp(self):
-        super().setUp()
-        slug = self.note.slug
-        self.urls = TestURLs(slug)
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        slug = cls.note.slug
+        cls.urls = TestURLs(slug)
 
     def test_status_codes(self):
-        urls = (
-            TestURLs.HOME_URL,
-            TestURLs.LOGIN_URL,
-            TestURLs.LOGOUT_URL,
-            TestURLs.SIGNUP_URL,
-        )
-        for url in urls:
-            with self.subTest(url=url):
-                response = self.client.get(url)
-                self.assertEqual(response.status_code, HTTPStatus.OK)
-
         cases = [
             (self.urls.EDIT_URL, self.author_client,
              HTTPStatus.OK),
@@ -40,6 +29,14 @@ class TestRoutes(BaseNoteTestCase):
              HTTPStatus.NOT_FOUND),
             (self.urls.DETAIL_URL, self.reader_client,
              HTTPStatus.NOT_FOUND),
+            (HOME_URL, self.client,
+             HTTPStatus.OK),
+            (LOGIN_URL, self.client,
+             HTTPStatus.OK),
+            (LOGOUT_URL, self.client,
+             HTTPStatus.OK),
+            (SIGNUP_URL, self.client,
+             HTTPStatus.OK),
         ]
         for url, client, expected_status in cases:
             with self.subTest(url=url):
@@ -48,17 +45,15 @@ class TestRoutes(BaseNoteTestCase):
 
     def test_redirect_for_anonymous_client(self):
         urls = (
-            (self.urls.EDIT_URL, None),
-            (self.urls.DELETE_URL, None),
-            (TestURLs.LIST_URL, None),
-            (TestURLs.SUCCESS_URL, None),
-            (TestURLs.ADD_URL, None),
-            (self.urls.DETAIL_URL, None),
+            (self.urls.EDIT_URL),
+            (self.urls.DELETE_URL),
+            (LIST_URL),
+            (SUCCESS_URL),
+            (ADD_URL),
+            (self.urls.DETAIL_URL),
         )
-        for url, args in urls:
+        redirect_url = f'{LOGIN_URL}?next={url}'
+        for url in urls:
             with self.subTest(url=url):
-                if args is not None:
-                    url = reverse(url, args=(args,))
                 response = self.client.get(url)
-                redirect_url = f'{TestURLs.LOGIN_URL}?next={url}'
                 self.assertRedirects(response, redirect_url)

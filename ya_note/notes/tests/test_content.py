@@ -1,44 +1,28 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase, Client
 from django.urls import reverse
 
-from notes.models import Note
 from notes.forms import NoteForm
-from .test_urls import TestURLs
+from .test_base import BaseNoteTestCase, LIST_URL
 
 User = get_user_model()
 
 
-class BaseNoteTestCase(TestCase):
+class TestContent(BaseNoteTestCase):
 
-    def setUp(self):
-        self.author = User.objects.create(username='Автор')
-        self.reader = User.objects.create(username='Читатель')
-        self.author_client = Client()
-        self.author_client.force_login(self.author)
-        self.reader_client = Client()
-        self.reader_client.force_login(self.reader)
-        self.note = self.create_note()
-
-    def create_note(self, title='Заголовок', text='Текст', slug='notes_slug',
-                    author=None):
-        if author is None:
-            author = self.author
-        return Note.objects.create(title=title, text=text, slug=slug,
-                                   author=author)
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
 
     def test_note_in_list_for_author(self):
-        url = TestURLs.LIST_URL
-        response = self.author_client.get(url)
+        response = self.author_client.get(LIST_URL)
         notes = response.context['object_list']
         self.assertIn(self.note, notes)
-        self.assertEqual(self.note.title, 'Заголовок')
-        self.assertEqual(self.note.text, 'Текст')
-        self.assertEqual(self.note.author, self.author)
+        self.assertContains(response, self.note.title)
+        self.assertContains(response, self.note.text)
+        self.assertContains(response, self.note.author)
 
     def test_note_not_in_list_for_another_user(self):
-        url = TestURLs.LIST_URL
-        response = self.reader_client.get(url)
+        response = self.reader_client.get(LIST_URL)
         notes = response.context['object_list']
         self.assertNotIn(self.note, notes)
 
