@@ -8,11 +8,6 @@ User = get_user_model()
 
 
 class TestContent(BaseNoteTestCase):
-
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-
     def test_note_in_list_for_author(self):
         response = self.author_client.get(LIST_URL)
         notes = response.context['object_list']

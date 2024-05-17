@@ -24,19 +24,19 @@ class TestURLs:
 
 
 class BaseNoteTestCase(TestCase):
-
-    def setUp(self):
-        self.author = User.objects.create(username='Автор')
-        self.reader = User.objects.create(username='Читатель')
-        self.author_client = Client()
-        self.author_client.force_login(self.author)
-        self.reader_client = Client()
-        self.reader_client.force_login(self.reader)
-        self.note = Note.objects.create(title='Заголовок', text='Текст',
-                                        slug='notes_slug', author=self.author)
-        self.user = User.objects.create(username='Пользователь')
-        self.auth_client = Client()
-        self.auth_client.force_login(self.user)
-        self.form_data = {'title': 'Заголовок',
-                          'text': 'Текст',
-                          'notes_slug': 'notes_slug'}
+    @classmethod
+    def setUpTestData(cls):
+        cls.author = User.objects.create(username='Автор')
+        cls.reader = User.objects.create(username='Читатель')
+        cls.author_client = Client()
+        cls.author_client.force_login(cls.author)
+        cls.reader_client = Client()
+        cls.reader_client.force_login(cls.reader)
+        cls.note = Note.objects.create(title='Заголовок', text='Текст',
+                                       slug='notes_slug', author=cls.author)
+        cls.user = User.objects.create(username='Пользователь')
+        cls.auth_client = Client()
+        cls.auth_client.force_login(cls.user)
+        cls.form_data = {'title': 'Заголовок',
+                         'text': 'Текст',
+                         'notes_slug': 'notes_slug'}

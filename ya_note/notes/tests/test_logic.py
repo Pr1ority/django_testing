@@ -13,10 +13,6 @@ User = get_user_model()
 
 
 class TestNoteCreation(BaseNoteTestCase):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-
     def test_anonymous_user_cant_create_note(self):
         response = self.client.post(ADD_URL, data=self.form_data)
         expected_url = f'{LOGIN_URL}?next={ADD_URL}'
