@@ -10,26 +10,19 @@ User = get_user_model()
 
 
 class TestRoutes(BaseNoteTestCase):
-
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        slug = cls.note.slug
-        cls.urls = TestURLs(slug)
-
     def test_status_codes(self):
         cases = [
-            (self.urls.EDIT_URL, self.author_client,
+            (TestURLs.EDIT_URL, self.author_client,
              HTTPStatus.OK),
-            (self.urls.DELETE_URL, self.author_client,
+            (TestURLs.DELETE_URL, self.author_client,
              HTTPStatus.OK),
-            (self.urls.DETAIL_URL, self.author_client,
+            (TestURLs.DETAIL_URL, self.author_client,
              HTTPStatus.OK),
-            (self.urls.EDIT_URL, self.reader_client,
+            (TestURLs.EDIT_URL, self.reader_client,
              HTTPStatus.NOT_FOUND),
-            (self.urls.DELETE_URL, self.reader_client,
+            (TestURLs.DELETE_URL, self.reader_client,
              HTTPStatus.NOT_FOUND),
-            (self.urls.DETAIL_URL, self.reader_client,
+            (TestURLs.DETAIL_URL, self.reader_client,
              HTTPStatus.NOT_FOUND),
             (HOME_URL, self.client,
              HTTPStatus.OK),
@@ -47,12 +40,12 @@ class TestRoutes(BaseNoteTestCase):
 
     def test_redirect_for_anonymous_client(self):
         urls = (
-            (self.urls.EDIT_URL),
-            (self.urls.DELETE_URL),
+            (TestURLs.EDIT_URL),
+            (TestURLs.DELETE_URL),
             (LIST_URL),
             (SUCCESS_URL),
             (ADD_URL),
-            (self.urls.DETAIL_URL),
+            (TestURLs.DETAIL_URL),
         )
         for url in urls:
             redirect_url = f'{LOGIN_URL}?next={url}'
