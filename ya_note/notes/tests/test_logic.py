@@ -14,6 +14,7 @@ User = get_user_model()
 
 class TestNoteCreation(BaseNoteTestCase):
     def test_anonymous_user_cant_create_note(self):
+        Note.objects.all().delete()
         response = self.client.post(ADD_URL, data=self.form_data)
         expected_url = f'{LOGIN_URL}?next={ADD_URL}'
         self.assertRedirects(response, expected_url)
