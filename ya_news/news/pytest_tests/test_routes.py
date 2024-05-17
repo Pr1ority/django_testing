@@ -20,11 +20,11 @@ REDIRECT_URL = pytest.lazy_fixture('redirect_url')
 @pytest.mark.parametrize(
     'url, client, expected_status',
     (
-        (HOME_URL, None, HTTPStatus.OK),
-        (DETAIL_URL, None, HTTPStatus.OK),
-        (LOGIN_URL, None, HTTPStatus.OK),
-        (LOGOUT_URL, None, HTTPStatus.OK),
-        (SIGNUP_URL, None, HTTPStatus.OK),
+        (HOME_URL,  pytest.lazy_fixture('client'), HTTPStatus.OK),
+        (DETAIL_URL, pytest.lazy_fixture('client'), HTTPStatus.OK),
+        (LOGIN_URL, pytest.lazy_fixture('client'), HTTPStatus.OK),
+        (LOGOUT_URL, pytest.lazy_fixture('client'), HTTPStatus.OK),
+        (SIGNUP_URL, pytest.lazy_fixture('client'), HTTPStatus.OK),
         (EDIT_URL, pytest.lazy_fixture('author_client'), HTTPStatus.OK),
         (DELETE_URL, pytest.lazy_fixture('author_client'), HTTPStatus.OK),
         (EDIT_URL, pytest.lazy_fixture('not_author_client'),
