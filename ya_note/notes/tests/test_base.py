@@ -7,7 +7,7 @@ from notes.models import Note
 User = get_user_model()
 
 
-SLUG = 'note_slug'
+SLUG = 'notes_slug'
 LIST_URL = reverse('notes:list')
 ADD_URL = reverse('notes:add')
 LOGIN_URL = reverse('users:login')
@@ -30,10 +30,10 @@ class BaseNoteTestCase(TestCase):
         cls.reader_client = Client()
         cls.reader_client.force_login(cls.reader)
         cls.note = Note.objects.create(title='Заголовок', text='Текст',
-                                       slug='notes_slug', author=cls.author)
+                                       slug=SLUG, author=cls.author)
         cls.user = User.objects.create(username='Пользователь')
         cls.auth_client = Client()
         cls.auth_client.force_login(cls.user)
         cls.form_data = {'title': 'Заголовок',
                          'text': 'Текст',
-                         'notes_slug': 'notes_slug'}
+                         'notes_slug': SLUG}

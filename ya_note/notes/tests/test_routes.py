@@ -40,12 +40,12 @@ class TestRoutes(BaseNoteTestCase):
 
     def test_redirect_for_anonymous_client(self):
         urls = (
-            (EDIT_URL),
-            (DELETE_URL),
-            (LIST_URL),
-            (SUCCESS_URL),
-            (ADD_URL),
-            (DETAIL_URL),
+            EDIT_URL,
+            DELETE_URL,
+            LIST_URL,
+            SUCCESS_URL,
+            ADD_URL,
+            DETAIL_URL,
         )
         for url in urls:
             redirect_url = f'{LOGIN_URL}?next={url}'
