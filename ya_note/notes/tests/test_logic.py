@@ -6,7 +6,8 @@ from django.urls import reverse
 
 from notes.forms import WARNING
 from notes.models import Note
-from .test_base import TestURLs, BaseNoteTestCase, ADD_URL, LOGIN_URL, SUCCESS_URL
+from .test_base import (TestURLs, BaseNoteTestCase, ADD_URL, LOGIN_URL,
+                        SUCCESS_URL)
 
 User = get_user_model()
 
@@ -20,7 +21,8 @@ class TestNoteCreation(BaseNoteTestCase):
         response = self.client.post(ADD_URL, data=self.form_data)
         expected_url = f'{LOGIN_URL}?next={ADD_URL}'
         self.assertRedirects(response, expected_url)
-        self.assertFalse(Note.objects.filter(title=self.form_data['title']).exists())
+        self.assertFalse(Note.objects.filter(
+            title=self.form_data['title']).exists())
 
     def test_user_can_create_note(self):
         response = self.auth_client.post(ADD_URL, data=self.form_data)
@@ -52,7 +54,8 @@ class TestNoteCreation(BaseNoteTestCase):
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
     def test_author_can_edit_note(self):
-        response = self.author_client.post(TestURLs.EDIT_URL, data=self.form_data)
+        response = self.author_client.post(TestURLs.EDIT_URL,
+                                           data=self.form_data)
         self.assertRedirects(response, SUCCESS_URL)
         updated_note = Note.objects.get(id=self.note.id)
         self.assertEqual(updated_note.text, self.form_data['text'])
@@ -61,7 +64,8 @@ class TestNoteCreation(BaseNoteTestCase):
         self.assertEqual(self.note.slug, self.form_data['notes_slug'])
 
     def test_user_cant_edit_note_of_another_user(self):
-        response = self.reader_client.post(TestURLs.EDIT_URL, data=self.form_data)
+        response = self.reader_client.post(TestURLs.EDIT_URL,
+                                           data=self.form_data)
         note_after = Note.objects.get(id=self.note.id)
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
         self.assertEqual(note_after.text, self.note.text)

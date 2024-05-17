@@ -7,7 +7,6 @@ from notes.models import Note
 User = get_user_model()
 
 
-
 SLUG = 'note_slug'
 LIST_URL = reverse('notes:list')
 ADD_URL = reverse('notes:add')
@@ -16,6 +15,7 @@ SUCCESS_URL = reverse('notes:success')
 HOME_URL = reverse('notes:home')
 LOGOUT_URL = reverse('users:logout')
 SIGNUP_URL = reverse('users:signup')
+
 
 class TestURLs:
     EDIT_URL = reverse('notes:edit', args=(SLUG,))
@@ -40,4 +40,3 @@ class BaseNoteTestCase(TestCase):
         self.form_data = {'title': 'Заголовок',
                           'text': 'Текст',
                           'notes_slug': 'notes_slug'}
-
