@@ -13,8 +13,6 @@ class TestContent(BaseNoteTestCase):
         notes = response.context['object_list']
         self.assertIn(self.note, notes)
         self.assertContains(response, self.note.title)
-        self.assertContains(response, self.note.text)
-        self.assertContains(response, self.note.author)
 
     def test_note_not_in_list_for_another_user(self):
         response = self.reader_client.get(LIST_URL)

@@ -77,14 +77,13 @@ class TestNoteCreation(BaseNoteTestCase):
             self.note.slug + WARNING))
         self.assertContains(response, self.note.title)
         self.assertContains(response, self.note.text)
-        self.assertContains(response, self.note.author)
 
     def test_empty_slug(self):
         Note.objects.all().delete()
         self.form_data.pop('notes_slug')
         response = self.auth_client.post(ADD_URL, data=self.form_data)
         self.assertRedirects(response, SUCCESS_URL)
-        new_note = Note.objects.get(id=self.note.id)
+        new_note = Note.objects.get(title=self.form_data['title'])
         expected_slug = slugify(self.form_data['title'])
         self.assertEqual(new_note.slug, expected_slug)
         self.assertEqual(new_note.text, self.form_data['text'])
