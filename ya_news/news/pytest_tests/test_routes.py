@@ -18,7 +18,7 @@ REDIRECT_URL = pytest.lazy_fixture('redirect_url')
 
 
 @pytest.mark.parametrize(
-    'url, client, expected_status',
+    'url, client_fixture, expected_status',
     (
         (HOME_URL, pytest.lazy_fixture('client'), HTTPStatus.OK),
         (DETAIL_URL, pytest.lazy_fixture('client'), HTTPStatus.OK),
@@ -33,9 +33,9 @@ REDIRECT_URL = pytest.lazy_fixture('redirect_url')
          HTTPStatus.NOT_FOUND),
     ),
 )
-def test_availability_for_comment_edit_and_delete(client,
+def test_availability_for_comment_edit_and_delete(client_fixture,
                                                   expected_status, url):
-    response = client.get(url)
+    response = client_fixture.get(url)
     assert response.status_code == expected_status
 
 
