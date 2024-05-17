@@ -2,9 +2,9 @@ from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
 
-from .test_base import (TestURLs, BaseNoteTestCase, LIST_URL, ADD_URL,
+from .test_base import (BaseNoteTestCase, LIST_URL, ADD_URL,
                         LOGIN_URL, SUCCESS_URL, HOME_URL, LOGOUT_URL,
-                        SIGNUP_URL)
+                        SIGNUP_URL, EDIT_URL, DELETE_URL, DETAIL_URL)
 
 User = get_user_model()
 
@@ -12,17 +12,17 @@ User = get_user_model()
 class TestRoutes(BaseNoteTestCase):
     def test_status_codes(self):
         cases = [
-            (TestURLs.EDIT_URL, self.author_client,
+            (EDIT_URL, self.author_client,
              HTTPStatus.OK),
-            (TestURLs.DELETE_URL, self.author_client,
+            (DELETE_URL, self.author_client,
              HTTPStatus.OK),
-            (TestURLs.DETAIL_URL, self.author_client,
+            (DETAIL_URL, self.author_client,
              HTTPStatus.OK),
-            (TestURLs.EDIT_URL, self.reader_client,
+            (EDIT_URL, self.reader_client,
              HTTPStatus.NOT_FOUND),
-            (TestURLs.DELETE_URL, self.reader_client,
+            (DELETE_URL, self.reader_client,
              HTTPStatus.NOT_FOUND),
-            (TestURLs.DETAIL_URL, self.reader_client,
+            (DETAIL_URL, self.reader_client,
              HTTPStatus.NOT_FOUND),
             (HOME_URL, self.client,
              HTTPStatus.OK),
@@ -40,12 +40,12 @@ class TestRoutes(BaseNoteTestCase):
 
     def test_redirect_for_anonymous_client(self):
         urls = (
-            (TestURLs.EDIT_URL),
-            (TestURLs.DELETE_URL),
+            (EDIT_URL),
+            (DELETE_URL),
             (LIST_URL),
             (SUCCESS_URL),
             (ADD_URL),
-            (TestURLs.DETAIL_URL),
+            (DETAIL_URL),
         )
         for url in urls:
             redirect_url = f'{LOGIN_URL}?next={url}'

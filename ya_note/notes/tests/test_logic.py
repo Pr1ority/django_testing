@@ -6,8 +6,8 @@ from django.urls import reverse
 
 from notes.forms import WARNING
 from notes.models import Note
-from .test_base import (TestURLs, BaseNoteTestCase, ADD_URL, LOGIN_URL,
-                        SUCCESS_URL)
+from .test_base import (BaseNoteTestCase, ADD_URL, LOGIN_URL,
+                        SUCCESS_URL, DELETE_URL, EDIT_URL)
 
 User = get_user_model()
 
@@ -34,7 +34,7 @@ class TestNoteCreation(BaseNoteTestCase):
 
     def test_author_can_delete_note(self):
         note_count_before = Note.objects.count()
-        response = self.author_client.delete(TestURLs.DELETE_URL)
+        response = self.author_client.delete(DELETE_URL)
         self.assertRedirects(response, SUCCESS_URL)
         note_count_after = Note.objects.count()
         self.assertEqual(note_count_after, note_count_before - 1)
@@ -42,7 +42,7 @@ class TestNoteCreation(BaseNoteTestCase):
         self.assertFalse(note_exists)
 
     def test_user_cant_delete_note_of_another_user(self):
-        response = self.reader_client.delete(TestURLs.DELETE_URL)
+        response = self.reader_client.delete(DELETE_URL)
         note_after = Note.objects.get(id=self.note.id)
         self.assertEqual(note_after.title, self.note.title)
         self.assertEqual(note_after.text, self.note.text)
@@ -51,7 +51,7 @@ class TestNoteCreation(BaseNoteTestCase):
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
     def test_author_can_edit_note(self):
-        response = self.author_client.post(TestURLs.EDIT_URL,
+        response = self.author_client.post(EDIT_URL,
                                            data=self.form_data)
         self.assertRedirects(response, SUCCESS_URL)
         updated_note = Note.objects.get(id=self.note.id)
@@ -61,7 +61,7 @@ class TestNoteCreation(BaseNoteTestCase):
         self.assertEqual(self.note.slug, self.form_data['notes_slug'])
 
     def test_user_cant_edit_note_of_another_user(self):
-        response = self.reader_client.post(TestURLs.EDIT_URL,
+        response = self.reader_client.post(EDIT_URL,
                                            data=self.form_data)
         note_after = Note.objects.get(id=self.note.id)
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)

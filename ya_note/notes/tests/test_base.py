@@ -15,12 +15,9 @@ SUCCESS_URL = reverse('notes:success')
 HOME_URL = reverse('notes:home')
 LOGOUT_URL = reverse('users:logout')
 SIGNUP_URL = reverse('users:signup')
-
-
-class TestURLs:
-    EDIT_URL = reverse('notes:edit', args=(SLUG,))
-    DELETE_URL = reverse('notes:delete', args=(SLUG,))
-    DETAIL_URL = reverse('notes:detail', args=(SLUG,))
+EDIT_URL = reverse('notes:edit', args=(SLUG,))
+DELETE_URL = reverse('notes:delete', args=(SLUG,))
+DETAIL_URL = reverse('notes:detail', args=(SLUG,))
 
 
 class BaseNoteTestCase(TestCase):
