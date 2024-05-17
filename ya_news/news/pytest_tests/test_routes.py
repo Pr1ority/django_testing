@@ -16,6 +16,7 @@ EDIT_URL = pytest.lazy_fixture('edit_url')
 DELETE_URL = pytest.lazy_fixture('delete_url')
 REDIRECT_URL = pytest.lazy_fixture('redirect_url')
 
+
 @pytest.mark.parametrize(
     'url, client, expected_status',
     (
@@ -26,8 +27,10 @@ REDIRECT_URL = pytest.lazy_fixture('redirect_url')
         (SIGNUP_URL, None, HTTPStatus.OK),
         (EDIT_URL, pytest.lazy_fixture('author_client'), HTTPStatus.OK),
         (DELETE_URL, pytest.lazy_fixture('author_client'), HTTPStatus.OK),
-        (EDIT_URL, pytest.lazy_fixture('not_author_client'), HTTPStatus.NOT_FOUND),
-        (DELETE_URL, pytest.lazy_fixture('not_author_client'), HTTPStatus.NOT_FOUND),
+        (EDIT_URL, pytest.lazy_fixture('not_author_client'),
+         HTTPStatus.NOT_FOUND),
+        (DELETE_URL, pytest.lazy_fixture('not_author_client'),
+         HTTPStatus.NOT_FOUND),
     ),
 )
 def test_availability_for_comment_edit_and_delete(client,

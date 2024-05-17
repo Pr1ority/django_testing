@@ -1,8 +1,4 @@
-from django.urls import reverse
-
 from news.forms import CommentForm
-
-
 
 
 def test_news_count(client, home_url):

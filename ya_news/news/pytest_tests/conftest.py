@@ -106,6 +106,7 @@ def logout_url():
 def signup_url():
     return reverse('users:signup')
 
+
 @pytest.fixture
 def redirect_url(login_url):
     def _redirect_url(url):
