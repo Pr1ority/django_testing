@@ -2,7 +2,6 @@ from http import HTTPStatus
 
 from pytils.translit import slugify
 from django.contrib.auth import get_user_model
-from django.urls import reverse
 
 from notes.forms import WARNING
 from notes.models import Note
@@ -14,23 +13,21 @@ User = get_user_model()
 
 class TestNoteCreation(BaseNoteTestCase):
     def test_anonymous_user_cant_create_note(self):
-        Note.objects.all().delete()
+        note_count_before = Note.objects.count()
         response = self.client.post(ADD_URL, data=self.form_data)
         expected_url = f'{LOGIN_URL}?next={ADD_URL}'
         self.assertRedirects(response, expected_url)
-        self.assertFalse(Note.objects.filter(
-            title=self.form_data['title']).exists())
+        note_count_after = Note.objects.count()
+        self.assertEqual(note_count_after, note_count_before)
 
     def test_user_can_create_note(self):
         response = self.auth_client.post(ADD_URL, data=self.form_data)
-        self.assertRedirects(response, reverse('notes:success'))
-        created_note = Note.objects.get(id=self.note.id)
-        self.assertEqual(created_note.title, self.form_data['title'])
-        self.assertEqual(created_note.text, self.form_data['text'])
-        self.assertEqual(created_note.author, self.author)
-        self.assertEqual(created_note.slug, self.form_data['notes_slug'])
-        self.assertEqual(Note.objects.filter(
-            title=self.form_data['title']).exists(), True)
+        self.assertRedirects(response, SUCCESS_URL)
+        new_note = Note.objects.latest('id')
+        self.assertEqual(new_note.title, self.form_data['title'])
+        self.assertEqual(new_note.text, self.form_data['text'])
+        self.assertEqual(new_note.author, self.author)
+        self.assertEqual(new_note.slug, self.form_data['notes_slug'])
 
     def test_author_can_delete_note(self):
         note_count_before = Note.objects.count()
@@ -72,22 +69,21 @@ class TestNoteCreation(BaseNoteTestCase):
 
     def test_not_unique_slug(self):
         self.form_data['slug'] = self.note.slug
+        note_count_before = Note.objects.count()
         response = self.auth_client.post(ADD_URL, data=self.form_data)
         self.assertFormError(response, 'form', 'slug', errors=(
             self.note.slug + WARNING))
-        self.assertContains(response, self.note.title)
-        self.assertContains(response, self.note.text)
+        note_count_after = Note.objects.count()
+        self.assertEqual(note_count_after, note_count_before)
 
     def test_empty_slug(self):
         Note.objects.all().delete()
         self.form_data.pop('notes_slug')
         response = self.auth_client.post(ADD_URL, data=self.form_data)
         self.assertRedirects(response, SUCCESS_URL)
-        new_note = Note.objects.get(title=self.form_data['title'])
+        new_note = Note.objects.latest('id')
         expected_slug = slugify(self.form_data['title'])
         self.assertEqual(new_note.slug, expected_slug)
         self.assertEqual(new_note.text, self.form_data['text'])
         self.assertEqual(new_note.title, self.form_data['title'])
         self.assertEqual(new_note.author, self.user)
-        self.assertEqual(Note.objects.filter(
-            title=self.form_data['title']).exists(), True)

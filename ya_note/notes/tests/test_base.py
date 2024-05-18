@@ -34,6 +34,6 @@ class BaseNoteTestCase(TestCase):
         cls.user = User.objects.create(username='Пользователь')
         cls.auth_client = Client()
         cls.auth_client.force_login(cls.user)
-        cls.form_data = {'title': 'Заголовок',
-                         'text': 'Текст',
-                         'notes_slug': SLUG}
+        cls.form_data = {'title': 'Заголовок формы',
+                         'text': 'Текст формы',
+                         'notes_slug': 'form_notes_slug'}

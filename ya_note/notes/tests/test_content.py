@@ -1,8 +1,7 @@
 from django.contrib.auth import get_user_model
-from django.urls import reverse
 
 from notes.forms import NoteForm
-from .test_base import BaseNoteTestCase, LIST_URL
+from .test_base import BaseNoteTestCase, LIST_URL, ADD_URL, EDIT_URL
 
 User = get_user_model()
 
@@ -12,7 +11,10 @@ class TestContent(BaseNoteTestCase):
         response = self.author_client.get(LIST_URL)
         notes = response.context['object_list']
         self.assertIn(self.note, notes)
-        self.assertContains(response, self.note.title)
+        note_from_list = notes.get(slug=self.note.slug)
+        self.assertEqual(note_from_list.title, self.note.title)
+        self.assertEqual(note_from_list.text, self.note.text)
+        self.assertEqual(note_from_list.author, self.note.author)
 
     def test_note_not_in_list_for_another_user(self):
         response = self.reader_client.get(LIST_URL)
@@ -21,8 +23,8 @@ class TestContent(BaseNoteTestCase):
 
     def test_form_on_pages(self):
         pages = {
-            'add': reverse('notes:add'),
-            'edit': reverse('notes:edit', args=(self.note.slug,))
+            'add': ADD_URL,
+            'edit': EDIT_URL
         }
 
         for page_name, url in pages.items():

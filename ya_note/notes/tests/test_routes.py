@@ -13,30 +13,31 @@ class TestRoutes(BaseNoteTestCase):
     def test_status_codes(self):
         cases = [
             (EDIT_URL, self.author_client,
-             HTTPStatus.OK),
+             HTTPStatus.OK, 'Author'),
             (DELETE_URL, self.author_client,
-             HTTPStatus.OK),
+             HTTPStatus.OK, 'Author'),
             (DETAIL_URL, self.author_client,
-             HTTPStatus.OK),
+             HTTPStatus.OK, 'Author'),
             (EDIT_URL, self.reader_client,
-             HTTPStatus.NOT_FOUND),
+             HTTPStatus.NOT_FOUND, 'Reader'),
             (DELETE_URL, self.reader_client,
-             HTTPStatus.NOT_FOUND),
+             HTTPStatus.NOT_FOUND, 'Reader'),
             (DETAIL_URL, self.reader_client,
-             HTTPStatus.NOT_FOUND),
+             HTTPStatus.NOT_FOUND, 'Reader'),
             (HOME_URL, self.client,
-             HTTPStatus.OK),
+             HTTPStatus.OK, 'Anonymous'),
             (LOGIN_URL, self.client,
-             HTTPStatus.OK),
+             HTTPStatus.OK, 'Anonymous'),
             (LOGOUT_URL, self.client,
-             HTTPStatus.OK),
+             HTTPStatus.OK, 'Anonymous'),
             (SIGNUP_URL, self.client,
-             HTTPStatus.OK),
+             HTTPStatus.OK, 'Anonymous'),
         ]
-        for url, client, expected_status in cases:
-            with self.subTest(url=url):
+        for url, client, expected_status, role in cases:
+            with self.subTest(url=url, role=role):
                 response = client.get(url)
-                self.assertEqual(response.status_code, expected_status)
+                self.assertEqual(response.status_code, expected_status,
+                                 f'Failed for {role} client at URL: {url}')
 
     def test_redirect_for_anonymous_client(self):
         urls = (
@@ -47,8 +48,8 @@ class TestRoutes(BaseNoteTestCase):
             ADD_URL,
             DETAIL_URL,
         )
-        for url in urls:
-            redirect_url = f'{LOGIN_URL}?next={url}'
+        redirect_urls = {url: f'{LOGIN_URL}?next={url}' for url in urls}
+        for url, redirect_url in redirect_urls.items():
             with self.subTest(url=url):
                 response = self.client.get(url)
                 self.assertRedirects(response, redirect_url)
