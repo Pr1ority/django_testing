@@ -32,6 +32,9 @@ class TestRoutes(BaseNoteTestCase):
              HTTPStatus.OK, 'Anonymous'),
             (SIGNUP_URL, self.client,
              HTTPStatus.OK, 'Anonymous'),
+            (ADD_URL, self.reader_client, HTTPStatus.OK, 'Reader'),
+            (LIST_URL, self.reader_client, HTTPStatus.OK, 'Reader'),
+            (SUCCESS_URL, self.reader_client, HTTPStatus.OK, 'Reader'),
         ]
         for url, client, expected_status, role in cases:
             with self.subTest(url=url, role=role):
