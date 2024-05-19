@@ -113,11 +113,6 @@ def redirect_login_url():
 
 
 @pytest.fixture
-def client():
-    return Client()
-
-
-@pytest.fixture
 def redirect_edit_url(edit_url, redirect_login_url):
     return f'{redirect_login_url}?next={edit_url}'
 

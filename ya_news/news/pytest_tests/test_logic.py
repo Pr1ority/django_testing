@@ -44,13 +44,13 @@ def test_user_cant_use_bad_words(author_client, detail_url):
 
 
 def test_author_can_edit_comment(author_client, edit_url,
-                                 url_to_comments, comment, news, author):
+                                 url_to_comments, comment):
     response = author_client.post(edit_url, data=FORM_DATA)
     assertRedirects(response, url_to_comments)
-    comment = Comment.objects.get(id=comment.id)
-    assert comment.text == FORM_DATA['text']
-    assert comment.news == news
-    assert comment.author == author
+    updated_comment = Comment.objects.get(id=comment.id)
+    assert updated_comment.text == FORM_DATA['text']
+    assert updated_comment.news == comment.news
+    assert updated_comment.author == comment.author
 
 
 def test_user_cant_edit_comment_of_another_user(not_author_client, edit_url,
@@ -72,8 +72,10 @@ def test_author_can_delete_comment(author_client, delete_url, url_to_comments):
 
 def test_user_cant_delete_comment_of_another_user(not_author_client,
                                                   delete_url, comment):
+    assert Comment.objects.filter(id=comment.id).exists()
     response = not_author_client.delete(delete_url)
     assert response.status_code == HTTPStatus.NOT_FOUND
+    assert Comment.objects.filter(id=comment.id).exists()
     comment_from_db = Comment.objects.get(id=comment.id)
     assert comment.text == comment_from_db.text
     assert comment.author == comment_from_db.author
