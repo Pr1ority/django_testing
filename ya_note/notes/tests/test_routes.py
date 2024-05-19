@@ -37,10 +37,14 @@ class TestRoutes(BaseNoteTestCase):
             (SUCCESS_URL, self.reader_client, HTTPStatus.OK, None),
         ]
         for url, client, expected_status, role in cases:
-            with self.subTest(url=url, role=role):
+            with self.subTest(url=url):
                 response = client.get(url)
-                self.assertEqual(response.status_code, expected_status,
-                                 f'Failed for {role} client at URL: {url}')
+                if role:
+                    self.assertEqual(response.status_code, expected_status,
+                                     f'Failed for {role} client at URL: {url}')
+                else:
+                    self.assertEqual(response.status_code, expected_status,
+                                     f'Failed for URL: {url}')
 
     def test_redirect_for_anonymous_client(self):
         urls = (
