@@ -28,7 +28,7 @@ class TestContent(BaseNoteTestCase):
             EDIT_URL
         ]
 
-        for url in urls():
+        for url in urls:
             response = self.author_client.get(url)
             self.assertIn('form', response.context)
             self.assertIsInstance(response.context['form'], NoteForm)

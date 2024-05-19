@@ -51,6 +51,7 @@ class TestNoteCreation(BaseNoteTestCase):
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
     def test_author_can_edit_note(self):
+        self.form_data['slug'] = 'new-slug-for-note'
         response = self.author_client.post(EDIT_URL,
                                            data=self.form_data)
         self.assertRedirects(response, SUCCESS_URL)
