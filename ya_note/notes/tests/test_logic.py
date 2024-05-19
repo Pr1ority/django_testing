@@ -13,19 +13,22 @@ User = get_user_model()
 
 class TestNoteCreation(BaseNoteTestCase):
     def test_anonymous_user_cant_create_note(self):
-        notes_before = list(Note.objects.values_list('id', flat=True))
+        notes_before = set(Note.objects.values_list('id', flat=True))
         response = self.client.post(ADD_URL, data=self.form_data)
         expected_url = f'{LOGIN_URL}?next={ADD_URL}'
         self.assertRedirects(response, expected_url)
-        notes_after = list(Note.objects.values_list('id', flat=True))
+        notes_after = set(Note.objects.values_list('id', flat=True))
         self.assertEqual(notes_after, notes_before)
 
     def test_user_can_create_note(self):
+        notes_before = set(Note.objects.values_list('id', flat=True))
         self.form_data['slug'] = 'new-slug-for-note'
         response = self.auth_client.post(ADD_URL, data=self.form_data)
         self.assertRedirects(response, SUCCESS_URL)
-        new_note = Note.objects.get(title=self.form_data['title'],
-                                    author=self.user)
+        notes_after = set(Note.objects.values_list('id', flat=True))
+        self.assertEqual(len(notes_after), len(notes_before) + 1)
+        new_note_id = (notes_after - notes_before).pop()
+        new_note = Note.objects.get(id=new_note_id)
         self.assertEqual(new_note.title, self.form_data['title'])
         self.assertEqual(new_note.text, self.form_data['text'])
         self.assertEqual(new_note.author, self.user)
@@ -73,18 +76,21 @@ class TestNoteCreation(BaseNoteTestCase):
 
     def test_not_unique_slug(self):
         self.form_data['slug'] = self.note.slug
-        notes_before = list(Note.objects.values_list('id', flat=True))
+        notes_before = set(Note.objects.values_list('id', flat=True))
         response = self.auth_client.post(ADD_URL, data=self.form_data)
         self.assertFormError(response, 'form', 'slug', errors=(
             self.note.slug + WARNING))
-        notes_after = list(Note.objects.values_list('id', flat=True))
+        notes_after = set(Note.objects.values_list('id', flat=True))
         self.assertEqual(notes_after, notes_before)
 
     def test_empty_slug(self):
-        Note.objects.all().delete()
+        notes_before = set(Note.objects.values_list('id', flat=True))
         self.form_data.pop('notes_slug')
         response = self.auth_client.post(ADD_URL, data=self.form_data)
         self.assertRedirects(response, SUCCESS_URL)
+        notes_after = set(Note.objects.values_list('id', flat=True))
+        new_note_id = (notes_after - notes_before).pop()
+        new_note = Note.objects.get(id=new_note_id)
         new_note = Note.objects.get(title=self.form_data['title'],
                                     author=self.user)
         expected_slug = slugify(self.form_data['title'])
