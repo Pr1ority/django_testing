@@ -11,10 +11,11 @@ class TestContent(BaseNoteTestCase):
         response = self.author_client.get(LIST_URL)
         notes = response.context['object_list']
         self.assertIn(self.note, notes)
-        note_from_list = notes.get(slug=self.note.slug)
+        note_from_list = notes.get(id=self.note.id)
         self.assertEqual(note_from_list.title, self.note.title)
         self.assertEqual(note_from_list.text, self.note.text)
         self.assertEqual(note_from_list.author, self.note.author)
+        self.assertEqual(note_from_list.slug, self.note.slug)
 
     def test_note_not_in_list_for_another_user(self):
         response = self.reader_client.get(LIST_URL)
@@ -22,13 +23,12 @@ class TestContent(BaseNoteTestCase):
         self.assertNotIn(self.note, notes)
 
     def test_form_on_pages(self):
-        pages = {
-            'add': ADD_URL,
-            'edit': EDIT_URL
-        }
+        urls = [
+            ADD_URL,
+            EDIT_URL
+        ]
 
-        for page_name, url in pages.items():
-            with self.subTest(page_name=page_name):
-                response = self.author_client.get(url)
-                self.assertIn('form', response.context)
-                self.assertIsInstance(response.context['form'], NoteForm)
+        for url in urls():
+            response = self.author_client.get(url)
+            self.assertIn('form', response.context)
+            self.assertIsInstance(response.context['form'], NoteForm)

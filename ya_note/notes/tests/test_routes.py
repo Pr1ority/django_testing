@@ -25,16 +25,16 @@ class TestRoutes(BaseNoteTestCase):
             (DETAIL_URL, self.reader_client,
              HTTPStatus.NOT_FOUND, 'Reader'),
             (HOME_URL, self.client,
-             HTTPStatus.OK, 'Anonymous'),
+             HTTPStatus.OK),
             (LOGIN_URL, self.client,
-             HTTPStatus.OK, 'Anonymous'),
+             HTTPStatus.OK),
             (LOGOUT_URL, self.client,
-             HTTPStatus.OK, 'Anonymous'),
+             HTTPStatus.OK),
             (SIGNUP_URL, self.client,
-             HTTPStatus.OK, 'Anonymous'),
-            (ADD_URL, self.reader_client, HTTPStatus.OK, 'Reader'),
-            (LIST_URL, self.reader_client, HTTPStatus.OK, 'Reader'),
-            (SUCCESS_URL, self.reader_client, HTTPStatus.OK, 'Reader'),
+             HTTPStatus.OK),
+            (ADD_URL, self.reader_client, HTTPStatus.OK),
+            (LIST_URL, self.reader_client, HTTPStatus.OK),
+            (SUCCESS_URL, self.reader_client, HTTPStatus.OK),
         ]
         for url, client, expected_status, role in cases:
             with self.subTest(url=url, role=role):
