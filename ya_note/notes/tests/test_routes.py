@@ -13,38 +13,34 @@ class TestRoutes(BaseNoteTestCase):
     def test_status_codes(self):
         cases = [
             (EDIT_URL, self.author_client,
-             HTTPStatus.OK, 'Author'),
+             HTTPStatus.OK),
             (DELETE_URL, self.author_client,
-             HTTPStatus.OK, 'Author'),
+             HTTPStatus.OK),
             (DETAIL_URL, self.author_client,
-             HTTPStatus.OK, 'Author'),
+             HTTPStatus.OK),
             (EDIT_URL, self.reader_client,
-             HTTPStatus.NOT_FOUND, 'Reader'),
+             HTTPStatus.NOT_FOUND),
             (DELETE_URL, self.reader_client,
-             HTTPStatus.NOT_FOUND, 'Reader'),
+             HTTPStatus.NOT_FOUND),
             (DETAIL_URL, self.reader_client,
-             HTTPStatus.NOT_FOUND, 'Reader'),
+             HTTPStatus.NOT_FOUND),
             (HOME_URL, self.client,
-             HTTPStatus.OK, None),
+             HTTPStatus.OK),
             (LOGIN_URL, self.client,
-             HTTPStatus.OK, None),
+             HTTPStatus.OK),
             (LOGOUT_URL, self.client,
-             HTTPStatus.OK, None),
+             HTTPStatus.OK),
             (SIGNUP_URL, self.client,
-             HTTPStatus.OK, None),
-            (ADD_URL, self.reader_client, HTTPStatus.OK, None),
-            (LIST_URL, self.reader_client, HTTPStatus.OK, None),
-            (SUCCESS_URL, self.reader_client, HTTPStatus.OK, None),
+             HTTPStatus.OK),
+            (ADD_URL, self.reader_client, HTTPStatus.OK),
+            (LIST_URL, self.reader_client, HTTPStatus.OK),
+            (SUCCESS_URL, self.reader_client, HTTPStatus.OK),
         ]
-        for url, client, expected_status, role in cases:
-            with self.subTest(url=url):
+        for url, client, expected_status in cases:
+            with self.subTest(url=url, client=client):
                 response = client.get(url)
-                if role:
-                    self.assertEqual(response.status_code, expected_status,
-                                     f'Failed for {role} client at URL: {url}')
-                else:
-                    self.assertEqual(response.status_code, expected_status,
-                                     f'Failed for URL: {url}')
+                self.assertEqual(response.status_code, expected_status,
+                                 f'Failed for {client} client at URL: {url}')
 
     def test_redirect_for_anonymous_client(self):
         urls = (
